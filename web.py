@@ -27,11 +27,6 @@ def give():
     addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))+".css"
     app.logger.critical('%s visit successfully', addp)
     print(addp)
-    time.sleep(10)
-    r = requests.get(addp).text
-    print(r)
     return redirect(addp, code=302)
-
-
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", port=8010, debug=True)
