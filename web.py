@@ -21,7 +21,7 @@ def append_log():
     # cursor = c.execute("INSERT INTO jj ")
     aa = 123
 
-@app.route('/aNa28N')
+@app.route('/aNa28Nss')
 def give():
     url = "https://www.voofd.com/static/"
     addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))+".css"
