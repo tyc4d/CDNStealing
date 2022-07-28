@@ -1,6 +1,10 @@
 import sqlite3,time,shutil,os,random
 from flask import Flask, render_template, request,redirect
+from flask.logging import default_handler
+
+
 app = Flask(__name__,static_folder='imgs/')
+app.logger.removeHandler(default_handler)
 
 def create_id():
     now_time = int(time.time())
@@ -21,9 +25,11 @@ def append_log():
 def give():
     url = "https://voohk.com/"
     addp = url+str(random.randint(1,100))
+    app.logger.info('%s visit successfully', addp)
     print(addp)
+    
     return redirect(addp, code=302)
 
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", port=30010, debug=True)
+    app.run(host = "0.0.0.0", port=8010, debug=True)
