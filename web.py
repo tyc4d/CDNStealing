@@ -1,4 +1,4 @@
-import sqlite3,time,shutil,os,random
+import sqlite3,time,shutil,os,random,requests
 from flask import Flask, render_template, request,redirect
 import logging
 log = logging.getLogger('werkzeug')
@@ -23,11 +23,11 @@ def append_log():
 
 @app.route('/aNa28N')
 def give():
-    url = "https://www.voofd.com/"
+    url = "https://www.voofd.com/static/"
     addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))+".css"
     app.logger.critical('%s visit successfully', addp)
     print(addp)
-    
+    print(requests.get(addp).text())
     return redirect(addp, code=302)
 
 
