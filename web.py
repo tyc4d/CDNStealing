@@ -2,7 +2,7 @@ import sqlite3,time,shutil,os,random
 from flask import Flask, render_template, request,redirect
 import logging
 log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+log.setLevel(logging.CRITICAL)
 
 app = Flask(__name__,static_folder='imgs/')
 
@@ -23,9 +23,9 @@ def append_log():
 
 @app.route('/aNa28N')
 def give():
-    url = "https://voohk.com/"
-    addp = url+str(random.randint(1,100))
-    app.logger.error('%s visit successfully', addp)
+    url = "https://voofd.com/"
+    addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))
+    app.logger.critical('%s visit successfully', addp)
     print(addp)
     
     return redirect(addp, code=302)
