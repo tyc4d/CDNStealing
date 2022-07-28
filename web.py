@@ -24,7 +24,7 @@ def append_log():
 @app.route('/aNa28N')
 def give():
     url = "https://www.voofd.com/"
-    addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))
+    addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))+".css"
     app.logger.critical('%s visit successfully', addp)
     print(addp)
     
