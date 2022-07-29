@@ -58,7 +58,7 @@ def short(visitPath):
                 print(refer)
         print(newurl)
         
-        return redirect(newurl, code=301)
+        return redirect(newurl, code=302)
         #return f'<meta http-equiv="refresh" content="0; url="{newurl}">'
     except:
         return f'<meta http-equiv="refresh" content="0; url="https://google.com.tw">'
