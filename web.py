@@ -40,11 +40,11 @@ def entryLogs():
         cursor = c.execute("SELECT * from jj")
         for row in cursor:
             res = time.localtime(float(row[1]))
-            timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 進入區域'
+            timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
             webpayload = f'<code>{row[2]}</code>'
             linkid=f'<code>{row[3]}</code>'
-            logs.append(timepayload + webpayload)
-            countPayload = f"<h1>共 {len(logs)} 次進入</h1>"
+            logs.append(timepayload + webpayload + linkid)
+            countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
         conn.close()
         if len(logs) == 0:
