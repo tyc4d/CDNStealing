@@ -47,23 +47,28 @@ def entryLogs():
         conn.close()
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
-    except:
+    except Exception as e:
         error = "Cannot find Sqlite DB or No DATA"
-        print(error)
+        print(e)
     return render_template('entryLogs.html', logs=logs, countPayload = countPayload, error=error)
 
 @app.route('/appendLogs/',methods=["POST","GET"])
 def appendLogs():
     countPayload = "";error = "";logs = []
     if request.method == "POST":
-        website = request.form["website"]
-        nowTime = round(float(time.time()),4)
-        linkid = id_generator()
-        conn = sqlite3.connect('mydb')
-        c = conn.cursor()
-        c.execute(f"INSERT INTO jj (createdTime,website,createdLink) VALUES ({website},{nowTime},{linkid})")
-        conn.commit()
-        conn.close()
+        try:
+            website = request.form["website"]
+            nowTime = round(float(time.time()),4)
+            print(nowTime)
+            linkid = id_generator()
+            conn = sqlite3.connect('mydb')
+            c = conn.cursor()
+            c.execute(f"INSERT INTO jj (createdTime,website,createdLink) VALUES ('{nowTime}','{website}','{linkid}')")
+            conn.commit()
+            conn.close()
+            return '<script>alert("成功")</script><meta http-equiv="refresh" content="0; url=".">'
+        except:
+            return '<script>alert("Faild")</script><meta http-equiv="refresh" content="0; url=".">'
     else:
         return render_template('appendLogs.html', logs=logs, countPayload = countPayload, error=error)
 
