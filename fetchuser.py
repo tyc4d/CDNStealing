@@ -28,12 +28,26 @@ def try_find_uid(text : str) -> int:
         raise UIDError(l)
     return int(uids[0].split(':')[-1])
 
+def try_find_email(text : str) -> str:
+    email = re.findall(r'"email":"[^"]+"', text)
+    l = len(set(email))
+    if l != 1:
+        raise UIDError(l)
+    return email[0].split(':')[-1]
+
+def try_find_isAdmin(text : str) -> str:
+    isAdmin = re.findall(r'"isAdmin":[^,]+', text)
+    l = len(set(isAdmin))
+    if l != 1:
+        raise UIDError(l)
+    return isAdmin[0].split(':')[-1]
+
 def find_uid_fail(e : Exception):
     print('find uid failed', e)
 
-def update_db(uid : int, dbid : int, cur) -> Optional[bool]:
+def update_db(uid : int , email : str, isAdmin : str, dbid : int, cur) -> Optional[bool]:
     try:
-        cur.execute(f'update {table_name} set uid = {uid}, visited = {True} where id = {dbid}')
+        cur.execute(f'update {table_name} set uid = {uid}, set email = {email}, set isAdmin = {isAdmin} , visited = {True} where id = {dbid}')
         con.commit()
         return True
     except Exception as e:
@@ -59,6 +73,8 @@ def loop() -> int:
 
         try:
             uid = try_find_uid(text)
+            email = try_find_email(text)
+            isAdmin = try_find_isAdmin(text)
         except Exception as e:
             find_uid_fail(e)
             continue
@@ -68,15 +84,15 @@ def loop() -> int:
 
     return update_count
 
-def create_testing_db():
-    cur.execute(f'create table {table_name} (id integer primary key, clickTime text, link text, refer text, uid text, visited integer)')
-    example_items = [
-            ('1', 'hi', 'https://www.voofd.com/static/426220.css', None, 0),
-            ('1', 'hi', 'https://www.voofd.com/static/426221.css', None, 0),
-            ('1', 'hi', 'https://www.voofd.com/s/4IL16U.css', None, 0),
-            ('1', 'hi', 'https://www.voofd.com/s/1KDZ94.css', None, 0),
-            ]
-    cur.executemany(f'insert into {table_name} (clickTime, link, refer, uid, visited) values (?, ?, ?, ?, ?)', example_items)
+# def create_testing_db():
+#     cur.execute(f'create table {table_name} (id integer primary key, clickTime text, link text, refer text, uid text, visited integer)')
+#     example_items = [
+#             ('1', 'hi', 'https://www.voofd.com/static/426220.css', None, 0),
+#             ('1', 'hi', 'https://www.voofd.com/static/426221.css', None, 0),
+#             ('1', 'hi', 'https://www.voofd.com/s/4IL16U.css', None, 0),
+#             ('1', 'hi', 'https://www.voofd.com/s/1KDZ94.css', None, 0),
+#             ]
+#     cur.executemany(f'insert into {table_name} (clickTime, link, refer, uid, visited) values (?, ?, ?, ?, ?)', example_items)
 
 
 def main():

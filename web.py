@@ -51,7 +51,7 @@ def short(visitPath):
             if visitPath == stored_link[0]:
                 cursor.execute(f"SELECT website from jj where createdLink='{visitPath}'")
                 newurl = str(cursor.fetchone()[0]) + id_generator() +'.css'
-                cursor.execute(f"INSERT INTO visitLog (clickTime,link,refer,dest) VALUES ('{nowTime}','{visitPath}','{refer}','{newurl}')")
+                cursor.execute(f"INSERT INTO visitLog (clickTime,link,refer,dest,visited) VALUES ('{nowTime}','{visitPath}','{refer}','{newurl}',{False})")
                 db.commit()
                 print(newurl)
             else:
