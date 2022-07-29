@@ -51,10 +51,9 @@ def short(visitPath):
                 c.execute(f"INSERT INTO visitLog (clickTime,link,refer,dest) VALUES ('{nowTime}','{visitPath}','{refer}','{newurl}')")
                 conn.commit()
                 print(newurl)
-
             else:
                 print(refer)
-
+        print(newurl)
         conn.close()
         return redirect(newurl, code=302)
         #return f'<meta http-equiv="refresh" content="0; url="{newurl}">'
