@@ -6,7 +6,7 @@ import logging
 
 app = Flask(__name__)
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))+'.css'
+    return ''.join(random.choice(chars) for _ in range(size))
 
 @app.route('/')
 def hello():
@@ -28,6 +28,47 @@ def operations():
         return render_template('operations.html')
     else:
         return "Error"
+
+@app.route('/s/<path:visitPath>',methods=["GET"])
+def short(visitPath):
+    countPayload = "";error = "";logs = []
+    try:
+        nowTime = round(float(time.time()),4)
+        linkid = visitPath
+        conn = sqlite3.connect('mydb')
+        refer = request.referrer
+        c = conn.cursor()
+        c.execute(f"INSERT INTO visitLog (clickTime,link,refer) VALUES ('{nowTime}','{linkid}','{refer}')")
+        conn.commit()
+        conn.close()
+        return f'<meta http-equiv="refresh" content="0; url=".">'
+    except:
+        return f'<meta http-equiv="refresh" content="0; url=".">'
+
+
+@app.route('/visitLogs/')
+def visitLogs():
+    countPayload = "";error = "";logs = []
+    try:
+        conn = sqlite3.connect('mydb')
+        c = conn.cursor()
+        cursor = c.execute("SELECT * from jj")
+        for row in cursor:
+            res = time.localtime(float(row[1]))
+            timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
+            webpayload = f'<br /><code>{row[2]}</code>'
+            linkid=f'<br /><code>{row[3]}</code>'
+            logs.append(timepayload + webpayload + linkid)
+            countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
+            print(f'id={row[0]}')
+        conn.close()
+        if len(logs) == 0:
+            error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
+    except Exception as e:
+        error = "Cannot find Sqlite DB or No DATA"
+        print(e)
+    return render_template('visitLogs.html', logs=logs, countPayload = countPayload, error=error)
+
 
 @app.route('/entryLogs/')
 def entryLogs():
