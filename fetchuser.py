@@ -33,25 +33,26 @@ def find_uid_fail(e : Exception):
 
 def update_db(uid : int, dbid : int, cur) -> Optional[bool]:
     try:
-        cur.execute(f'update {table_name} set uid = ?, visited = 1 where id = ?', (uid, dbid))
+        cur.execute(f'update {table_name} set uid = {uid}, visited = {True} where id = {dbid}')
+        con.commit()
         return True
     except Exception as e:
         print(e)
 
 def loop() -> int:
     # Select rows with default values
-    cur.execute(f'select id, dest from {table_name} where visited=0')
+    cur.execute(f'select id, dest from {table_name} where visited!={True}')
     rows = cur.fetchall()
     print(rows)
     update_count = 0
 
     for row in rows:
-        print(row)
+        # print(row)
         dest = row[1] # The clicked link
         dbid = row[0]
         try:
             text = try_fetch(dest).text
-            print(text)
+            # print(text)
         except Exception as e:
             fetch_fail(e)
             continue
