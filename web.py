@@ -1,6 +1,7 @@
 import time,shutil,os,random,string
 from unittest import result
 import pymysql
+from pytz import timezone
 db = pymysql.connect(host='steal.tyc4d.tw',user='user',passwd="zxc19201080",db='mydb')
 cursor = db.cursor()
 from flask import Flask, after_this_request, render_template, request,redirect
@@ -65,20 +66,21 @@ def short(visitPath):
 
 @app.route('/visitLogs/')
 def visitLogs():
-    countPayload = "";error = "";logs = []
+    countPayload = "";error = "";logs = [];details=""
     try:
-        
-        
         cursor.execute("SELECT * from visitLog")
         result = cursor.fetchall()
         for row in result:
             res = time.localtime(float(row[1]))
             timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
             webpayload = f'<br /><code>隨機ID : {row[2]}</code><br />Refer : <code>{row[3]}</code><br /><a href="{row[4]}">{row[4]}</a>'
-            logs.append(timepayload + webpayload)
+            if (row[5]):
+                details = '<code>機器人尚未擷取資到資訊，請稍候重整</code>'
+            else:
+                details = f'Target Site UID : <code>{row[6]}</code>'
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
-        
+            logs.append(timepayload + webpayload + details)
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
     except Exception as e:
