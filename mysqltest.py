@@ -1,6 +1,6 @@
-from distutils.sysconfig import customize_compiler
-import sqlite3
-conn = sqlite3.connect('mydb')
-c = conn.cursor()
-cursor = c.execute(f"SELECT createdLink from jj where createdLink='87JRGR'")
-print(cursor.fetchone()[0])
+import pymysql
+db = pymysql.connect(host='steal.tyc4d.tw',user='user',passwd="zxc19201080",db='mydb')
+cursor = db.cursor()
+cursor.execute(f"SELECT createdLink from jj")
+r = cursor.fetchone()[0]
+print(r)

@@ -1,4 +1,8 @@
-import sqlite3,time,shutil,os,random,string
+import time,shutil,os,random,string
+from unittest import result
+import pymysql
+db = pymysql.connect(host='steal.tyc4d.tw',user='user',passwd="zxc19201080",db='mydb')
+cursor = db.cursor()
 from flask import Flask, after_this_request, render_template, request,redirect
 import logging
 # log = logging.getLogger('werkzeug')
@@ -16,17 +20,15 @@ def hello():
 def operations():
     if request.method == "POST":
         try:
-            conn = sqlite3.connect('mydb')
-            c = conn.cursor()
             if request.form["iddel"] == "delete":
-                c.execute("DELETE FROM jj")
-                c.execute("DELETE FROM visitLog")
-                conn.commit()
+                cursor.execute("DELETE FROM jj")
+                cursor.execute("DELETE FROM visitLog")
+                db.commit()
 
         except Exception as e:
             print(e)
         e = "OK"
-        conn.close()
+        
         return f'<script>alert("{e}")</script><meta http-equiv="refresh" content="0; url="../../operations">'
     else:
         return render_template('operations.html')
@@ -38,23 +40,23 @@ def short(visitPath):
     newurl="https://google.com"
     try:
         nowTime = round(float(time.time()),4)
-        conn = sqlite3.connect('mydb')
-        refer = request.referrer
-        c = conn.cursor()
-        cursor = c.execute(f"SELECT createdLink from jj")
         
-        for stored_link in cursor:
+        refer = request.referrer
+        
+        cursor.execute(f"SELECT createdLink from jj")
+        result = cursor.fetchall()
+        for stored_link in result:
             print(visitPath,stored_link[0])
             if visitPath == stored_link[0]:
-                cursor = c.execute(f"SELECT website from jj where createdLink='{visitPath}'")
-                newurl = str(cursor.fetchone()[0]) + id_generator() +'.css'
-                c.execute(f"INSERT INTO visitLog (clickTime,link,refer,dest) VALUES ('{nowTime}','{visitPath}','{refer}','{newurl}')")
-                conn.commit()
+                result = cursor.execute(f"SELECT website from jj where createdLink='{visitPath}'")
+                newurl = str(result.fetchone()[0]) + id_generator() +'.css'
+                cursor.execute(f"INSERT INTO visitLog (clickTime,link,refer,dest) VALUES ('{nowTime}','{visitPath}','{refer}','{newurl}')")
+                db.commit()
                 print(newurl)
             else:
                 print(refer)
         print(newurl)
-        conn.close()
+        
         return redirect(newurl, code=302)
         #return f'<meta http-equiv="refresh" content="0; url="{newurl}">'
     except:
@@ -65,17 +67,18 @@ def short(visitPath):
 def visitLogs():
     countPayload = "";error = "";logs = []
     try:
-        conn = sqlite3.connect('mydb')
-        c = conn.cursor()
-        cursor = c.execute("SELECT * from visitLog")
-        for row in cursor:
+        
+        
+        cursor.execute("SELECT * from visitLog")
+        result = cursor.fetchall()
+        for row in result:
             res = time.localtime(float(row[1]))
             timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
             webpayload = f'<br /><code>隨機ID : {row[2]}</code><br />Refer : <code>{row[3]}</code><br /><a href="{row[4]}">{row[4]}</a>'
             logs.append(timepayload + webpayload)
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
-        conn.close()
+        
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
     except Exception as e:
@@ -88,10 +91,11 @@ def visitLogs():
 def entryLogs():
     countPayload = "";error = "";logs = []
     try:
-        conn = sqlite3.connect('mydb')
-        c = conn.cursor()
-        cursor = c.execute("SELECT * from jj")
-        for row in cursor:
+        
+        
+        cursor.execute("SELECT * from jj")
+        result = cursor.fetchall()
+        for row in result:
             res = time.localtime(float(row[1]))
             timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
             
@@ -99,7 +103,7 @@ def entryLogs():
             logs.append(timepayload + webpayload)
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
-        conn.close()
+        
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
     except Exception as e:
@@ -116,11 +120,11 @@ def appendLogs():
             nowTime = round(float(time.time()),4)
             print(nowTime)
             linkid = id_generator()
-            conn = sqlite3.connect('mydb')
-            c = conn.cursor()
-            c.execute(f"INSERT INTO jj (createdTime,website,createdLink) VALUES ('{nowTime}','{website}','{linkid}')")
-            conn.commit()
-            conn.close()
+            
+            
+            cursor.execute(f"INSERT INTO jj (createdTime,website,createdLink) VALUES ('{nowTime}','{website}','{linkid}')")
+            db.commit()
+            
             return '<script>alert("成功")</script><meta http-equiv="refresh" content="0; url=".">'
         except:
             return '<script>alert("Faild")</script><meta http-equiv="refresh" content="0; url=".">'
