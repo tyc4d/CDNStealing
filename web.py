@@ -2,8 +2,11 @@ import time,shutil,os,random,string
 from unittest import result
 import pymysql
 from pytz import timezone
-db = pymysql.connect(host='steal.tyc4d.tw',user='user',passwd="zxc19201080",db='mydb')
-cursor = db.cursor()
+def opendb():
+    global db
+    db = pymysql.connect(host='steal.tyc4d.tw',user='user',passwd="zxc19201080",db='mydb')
+    global cursor
+    cursor = db.cursor()
 from flask import Flask, after_this_request, render_template, request,redirect
 import logging
 # log = logging.getLogger('werkzeug')
@@ -22,10 +25,11 @@ def operations():
     if request.method == "POST":
         try:
             if request.form["iddel"] == "delete":
+                opendb()
                 cursor.execute("DELETE FROM jj")
                 cursor.execute("DELETE FROM visitLog")
                 db.commit()
-
+                db.close()
         except Exception as e:
             print(e)
         e = "OK"
@@ -41,9 +45,8 @@ def short(visitPath):
     newurl="https://google.com"
     try:
         nowTime = round(float(time.time()),4)
-        
         refer = request.referrer
-        
+        opendb()
         cursor.execute(f"SELECT createdLink from jj")
         result = cursor.fetchall()
         for stored_link in result:
@@ -57,7 +60,7 @@ def short(visitPath):
             else:
                 print(refer)
         print(newurl)
-        
+        db.close()
         return redirect(newurl, code=302)
         #return f'<meta http-equiv="refresh" content="0; url="{newurl}">'
     except:
@@ -68,6 +71,7 @@ def short(visitPath):
 def visitLogs():
     countPayload = "";error = "";logs = [];details=""
     try:
+        opendb()
         cursor.execute("SELECT * from visitLog")
         result = cursor.fetchall()
         for row in result:
@@ -84,6 +88,7 @@ def visitLogs():
             print(f'id={row[0]}')
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
+        db.close()
     except Exception as e:
         error = "Cannot find Sqlite DB or No DATA"
         print(e)
@@ -95,7 +100,7 @@ def entryLogs():
     countPayload = "";error = "";logs = []
     try:
         
-        
+        opendb()
         cursor.execute("SELECT * from jj")
         result = cursor.fetchall()
         for row in result:
@@ -109,6 +114,7 @@ def entryLogs():
         
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
+        db.close()
     except Exception as e:
         error = "Cannot find Sqlite DB or No DATA"
         print(e)
@@ -123,11 +129,11 @@ def appendLogs():
             nowTime = round(float(time.time()),4)
             print(nowTime)
             linkid = id_generator()
-            
+            opendb()
             
             cursor.execute(f"INSERT INTO jj (createdTime,website,createdLink) VALUES ('{nowTime}','{website}','{linkid}')")
             db.commit()
-            
+            db.close()
             return '<script>alert("成功")</script><meta http-equiv="refresh" content="0; url=".">'
         except:
             return '<script>alert("Faild")</script><meta http-equiv="refresh" content="0; url=".">'
