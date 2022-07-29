@@ -78,9 +78,9 @@ def visitLogs():
                 details = '<code>機器人尚未擷取資到資訊，請稍候重整</code>'
             else:
                 details = f'<br />Target Site UID : <code>{row[6]}</code><br />Target Site User Email : <code>{row[7]}</code><br />Target Site isAdmin : <code>{row[8]}</code>'
+            logs.append(timepayload + webpayload + details)
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
-            logs.append(timepayload + webpayload + details)
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
     except Exception as e:
