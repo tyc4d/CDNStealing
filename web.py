@@ -52,7 +52,7 @@ def entryLogs():
     except:
         error = "Cannot find Sqlite DB or No DATA"
         print(error)
-    return render_template('entryLogs.html', logs=logs, countPayload = countPayload, error=error)
+    return render_template('entryLog.html', logs=logs, countPayload = countPayload, error=error)
 
 
 @app.route('/aNa28Nss')
