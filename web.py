@@ -75,7 +75,7 @@ def visitLogs():
             timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
             webpayload = f'<br /><code>隨機ID : {row[2]}</code><br />Refer : <code>{row[3]}</code><br /><a href="{row[4]}">{row[4]}</a>'
             if (row[5] == b'0'):
-                details = '<code>機器人尚未擷取資到資訊，請稍候重整</code>'
+                details = '<br /><code>機器人尚未擷取資到資訊或未被緩存，請稍候重整</code>'
             else:
                 details = f'<br />Target Site UID : <code>{row[6]}</code><br />Target Site User Email : <code>{row[7]}</code><br />Target Site isAdmin : <code>{row[8]}</code>'
             logs.append(timepayload + webpayload + details)
