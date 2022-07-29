@@ -16,18 +16,18 @@ def hello():
 def operations():
     if request.method == "POST":
         try:
-            shutil.rmtree("imgs")
-            os.remove("mydb")
-        except OSError as e:
-            message = e
-        else:
-            message = "成功刪除"
-        print(message)
-        return f'<script>alert("{message}")</script><meta http-equiv="refresh" content="0; url="../../operations">'
-    if request.method == "GET":
-        return render_template('operations.html')
+            conn = sqlite3.connect('mydb')
+            c = conn.cursor()
+            if request.form["iddel"] == "delete":
+                c.execute(f"DELETE FROM jj")
+            elif request.form["visitdel"] == "delete":
+                c.execute(f"DELETE FROM visitLog")
+        except Exception as e:
+            print(e)
+        return f'<script>alert("{e}")</script><meta http-equiv="refresh" content="0; url="../../operations">'
     else:
-        return "Error"
+        return render_template('operations.html')
+
 
 @app.route('/s/<path:visitPath>',methods=["GET"])
 def short(visitPath):
