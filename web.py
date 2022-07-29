@@ -53,7 +53,7 @@ def entryLogs():
     return render_template('entryLogs.html', logs=logs, countPayload = countPayload, error=error)
 
 @app.route('/appendLogs/',methods=["POST","GET"])
-def entryLogs():
+def appendLogs():
     countPayload = "";error = "";logs = []
     if request.method == "POST":
         website = request.form["website"]
