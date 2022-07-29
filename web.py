@@ -14,17 +14,19 @@ def hello():
 
 @app.route('/operations/',methods=["POST","GET"])
 def operations():
-    e = "OK"
     if request.method == "POST":
         try:
             conn = sqlite3.connect('mydb')
             c = conn.cursor()
             if request.form["iddel"] == "delete":
-                c.execute(f"DELETE FROM jj")
-            elif request.form["visitdel"] == "delete":
-                c.execute(f"DELETE FROM visitLog")
+                c.execute("DELETE FROM jj")
+                c.execute("DELETE FROM visitLog")
+                conn.commit()
+
         except Exception as e:
             print(e)
+        e = "OK"
+        conn.close()
         return f'<script>alert("{e}")</script><meta http-equiv="refresh" content="0; url="../../operations">'
     else:
         return render_template('operations.html')
