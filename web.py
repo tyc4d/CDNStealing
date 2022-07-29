@@ -4,14 +4,14 @@ import logging
 # log = logging.getLogger('werkzeug')
 # log.setLevel(logging.CRITICAL)
 
-app = Flask(__name__,static_folder='imgs/')
+app = Flask(__name__)
 
 def create_id():
     now_time = int(time.time())
     print(now_time)
 
 @app.route('/')
-def root_menu():
+def hello():
     return render_template("index.html")
 
 @app.route('/operations/',methods=["POST","GET"])
