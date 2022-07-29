@@ -5,7 +5,7 @@ import logging
 # log.setLevel(logging.CRITICAL)
 
 app = Flask(__name__)
-def id_generator(size=random.radonint(1,10), chars=string.ascii_uppercase + string.digits):
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))+'.css'
 
 @app.route('/')
