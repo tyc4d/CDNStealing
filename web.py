@@ -1,5 +1,5 @@
 import sqlite3,time,shutil,os,random,string
-from flask import Flask, render_template, request,redirect
+from flask import Flask, after_this_request, render_template, request,redirect
 import logging
 # log = logging.getLogger('werkzeug')
 # log.setLevel(logging.CRITICAL)
@@ -31,19 +31,32 @@ def operations():
 
 @app.route('/s/<path:visitPath>',methods=["GET"])
 def short(visitPath):
-    countPayload = "";error = "";logs = []
+    print(visitPath)
+    newurl="https://google.com"
     try:
         nowTime = round(float(time.time()),4)
-        linkid = visitPath
         conn = sqlite3.connect('mydb')
         refer = request.referrer
         c = conn.cursor()
-        c.execute(f"INSERT INTO visitLog (clickTime,link,refer) VALUES ('{nowTime}','{linkid}','{refer}')")
-        conn.commit()
+        cursor = c.execute(f"SELECT createdLink from jj")
+        
+        for stored_link in cursor:
+            print(visitPath,stored_link[0])
+            if visitPath == stored_link[0]:
+                cursor = c.execute(f"SELECT website from jj where createdLink='{visitPath}'")
+                newurl = str(cursor.fetchone()[0]) + id_generator() +'.css'
+                c.execute(f"INSERT INTO visitLog (clickTime,link,refer,dest) VALUES ('{nowTime}','{visitPath}','{refer}','{newurl}')")
+                conn.commit()
+                print(newurl)
+
+            else:
+                print(refer)
+
         conn.close()
-        return f'<meta http-equiv="refresh" content="0; url=".">'
+        return redirect(newurl, code=302)
+        #return f'<meta http-equiv="refresh" content="0; url="{newurl}">'
     except:
-        return f'<meta http-equiv="refresh" content="0; url=".">'
+        return f'<meta http-equiv="refresh" content="0; url="https://google.com.tw">'
 
 
 @app.route('/visitLogs/')
@@ -52,13 +65,12 @@ def visitLogs():
     try:
         conn = sqlite3.connect('mydb')
         c = conn.cursor()
-        cursor = c.execute("SELECT * from jj")
+        cursor = c.execute("SELECT * from visitLog")
         for row in cursor:
             res = time.localtime(float(row[1]))
             timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
-            webpayload = f'<br /><code>{row[2]}</code>'
-            linkid=f'<br /><code>{row[3]}</code>'
-            logs.append(timepayload + webpayload + linkid)
+            webpayload = f'<br /><code>隨機ID : {row[2]}</code><br />Refer : <code>{row[3]}</code><br /><a href="{row[4]}">{row[4]}</a>'
+            logs.append(timepayload + webpayload)
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
         conn.close()
@@ -80,9 +92,9 @@ def entryLogs():
         for row in cursor:
             res = time.localtime(float(row[1]))
             timepayload = f'{res.tm_year} 年 {res.tm_mon} 月 {res.tm_mday} 日 {res.tm_hour} 時 {res.tm_min} 分 {res.tm_sec} 秒 生成'
-            webpayload = f'<br /><code>{row[2]}</code>'
-            linkid=f'<br /><code>{row[3]}</code>'
-            logs.append(timepayload + webpayload + linkid)
+            
+            webpayload = f'<br /><code>{row[2]}{row[3]}</code>'
+            logs.append(timepayload + webpayload)
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
         conn.close()
@@ -123,6 +135,9 @@ def give():
     app.logger.critical('%s visit successfully', addp)
     print(addp)
     return redirect(addp, code=302)
+
+
+
     
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", port=8010, debug=True)
