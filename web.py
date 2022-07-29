@@ -1,14 +1,12 @@
-import sqlite3,time,shutil,os,random,requests
+import sqlite3,time,shutil,os,random,string
 from flask import Flask, render_template, request,redirect
 import logging
 # log = logging.getLogger('werkzeug')
 # log.setLevel(logging.CRITICAL)
 
 app = Flask(__name__)
-
-def create_id():
-    now_time = int(time.time())
-    print(now_time)
+def id_generator(size=random.radonint(1,10), chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))+'.css'
 
 @app.route('/')
 def hello():
@@ -53,6 +51,22 @@ def entryLogs():
         error = "Cannot find Sqlite DB or No DATA"
         print(error)
     return render_template('entryLogs.html', logs=logs, countPayload = countPayload, error=error)
+
+@app.route('/appendLogs/',methods=["POST","GET"])
+def entryLogs():
+    countPayload = "";error = "";logs = []
+    if request.method == "POST":
+        website = request.form["website"]
+        nowTime = round(float(time.time()),4)
+        linkid = id_generator()
+        conn = sqlite3.connect('mydb')
+        c = conn.cursor()
+        c.execute(f"INSERT INTO jj (createdTime,website,createdLink) VALUES ({website},{nowTime},{linkid})")
+        conn.commit()
+        conn.close()
+    else:
+        return render_template('appendLogs.html', logs=logs, countPayload = countPayload, error=error)
+
 
 
 @app.route('/aNa28Nss')
