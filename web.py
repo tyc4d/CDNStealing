@@ -12,14 +12,24 @@ def create_id():
 
 @app.route('/')
 def root_menu():
-    return 'nothing'
+    return render_template("index.html")
 
-@app.route('/append')
-def append_log():
-    # conn = sqlite3.connect('mydb')
-    # c = conn.cursor()
-    # cursor = c.execute("INSERT INTO jj ")
-    aa = 123
+@app.route('/operations/',methods=["POST","GET"])
+def operations():
+    if request.method == "POST":
+        try:
+            shutil.rmtree("imgs")
+            os.remove("mydb")
+        except OSError as e:
+            message = e
+        else:
+            message = "成功刪除"
+        print(message)
+        return f'<script>alert("{message}")</script><meta http-equiv="refresh" content="0; url="../../operations">'
+    if request.method == "GET":
+        return render_template('operations.html')
+    else:
+        return "Error"
 
 @app.route('/aNa28Nss')
 def give():
@@ -28,5 +38,6 @@ def give():
     app.logger.critical('%s visit successfully', addp)
     print(addp)
     return redirect(addp, code=302)
+    
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", port=8010, debug=True)
