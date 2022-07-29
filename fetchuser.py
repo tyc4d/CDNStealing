@@ -47,7 +47,7 @@ def find_uid_fail(e : Exception):
 
 def update_db(uid : int , email : str, isAdmin : str, dbid : int, cur) -> Optional[bool]:
     try:
-        cur.execute(f'update {table_name} set uid = {uid}, set email = {email}, set isAdmin = {isAdmin} , visited = {True} where id = {dbid}')
+        cur.execute(f'update {table_name} set uid = {uid}, email = {email}, isAdmin = "{isAdmin}" , visited = {True} where id = {dbid}')
         con.commit()
         return True
     except Exception as e:
@@ -79,7 +79,7 @@ def loop() -> int:
             find_uid_fail(e)
             continue
 
-        if update_db(uid, dbid, cur):
+        if update_db(uid, email, isAdmin, dbid, cur):
             update_count += 1
 
     return update_count
