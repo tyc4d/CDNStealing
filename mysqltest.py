@@ -4,4 +4,5 @@ cursor = db.cursor()
 cursor.execute("SELECT * from visitLog")
 result = cursor.fetchall()
 for i in result:
-    print(type(i[5]))
+    print((i[5])==b'0')
+db.close()
