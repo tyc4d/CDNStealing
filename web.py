@@ -77,7 +77,7 @@ def visitLogs():
             if (row[5] == '0'):
                 details = '<code>機器人尚未擷取資到資訊，請稍候重整</code>'
             else:
-                details = f'<br />Target Site UID : <code>{row[6]}</code><br />Target Site User Email : <code>{row[7]}</code>'
+                details = f'<br />Target Site UID : <code>{row[6]}</code><br />Target Site User Email : <code>{row[7]}</code><br />Target Site isAdmin : <code>{row[8]}</code>'
             countPayload = f"<h1>共 {len(logs)} 筆紀錄</h1>"
             print(f'id={row[0]}')
             logs.append(timepayload + webpayload + details)
