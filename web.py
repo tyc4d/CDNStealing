@@ -14,6 +14,7 @@ def hello():
 
 @app.route('/operations/',methods=["POST","GET"])
 def operations():
+    e = "OK"
     if request.method == "POST":
         try:
             conn = sqlite3.connect('mydb')
