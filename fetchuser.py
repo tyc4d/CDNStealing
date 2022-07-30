@@ -96,9 +96,13 @@ def loop() -> int:
 
 
 def main():
-    
-    n_new_id = loop()
-    print(f'Updated {n_new_id} ids')
+    while True:
+        try:
+            n_new_id = loop()
+            print(f'Updated {n_new_id} ids')
+            sleep(20)
+        except:
+            break
 
 if __name__ == '__main__':
     # create_testing_db()

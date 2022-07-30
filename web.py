@@ -41,7 +41,6 @@ def operations():
 
 @app.route('/s/<path:visitPath>',methods=["GET"])
 def short(visitPath):
-    print(visitPath)
     newurl="https://google.com"
     try:
         nowTime = round(float(time.time()),4)
@@ -50,7 +49,6 @@ def short(visitPath):
         cursor.execute(f"SELECT createdLink from jj")
         result = cursor.fetchall()
         for stored_link in result:
-            print(visitPath,stored_link[0])
             if visitPath == stored_link[0]:
                 cursor.execute(f"SELECT website from jj where createdLink='{visitPath}'")
                 newurl = str(cursor.fetchone()[0]) + id_generator() +'.css'
@@ -59,7 +57,6 @@ def short(visitPath):
                 print(newurl)
             else:
                 print(refer)
-        print(newurl)
         db.close()
         return redirect(newurl, code=302)
         #return f'<meta http-equiv="refresh" content="0; url="{newurl}">'
