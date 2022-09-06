@@ -138,15 +138,15 @@ def appendLogs():
         return render_template('appendLogs.html', logs=logs, countPayload = countPayload, error=error)
 
 
-
-@app.route('/aNa28Nss')
-def give():
-    url = "https://www.voofd.com/static/"
-    addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))+".css"
-    nowTime = round(float(time.time()),4)
-    app.logger.critical('%s visit successfully', addp)
-    print(addp)
-    return redirect(addp, code=302)
+# For testing propose
+# @app.route('/aNa28Nss')
+# def give():
+#     url = "https://www.voofd.com/static/"
+#     addp = url+str(random.randint(1,100))+str(random.randint(1,100))+str(random.randint(1,100))+".css"
+#     nowTime = round(float(time.time()),4)
+#     app.logger.critical('%s visit successfully', addp)
+#     print(addp)
+#     return redirect(addp, code=302)
 
 
 
