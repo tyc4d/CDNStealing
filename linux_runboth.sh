@@ -1,2 +1,2 @@
-python cam.py &
+python fetchuser.py &
 python web.py &
